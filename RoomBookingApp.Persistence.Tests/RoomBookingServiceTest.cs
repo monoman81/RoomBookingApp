@@ -58,12 +58,13 @@ namespace RoomBookingApp.Persistence
         [Fact]
         public void Should_Save_Room_Booking()
         {
-            //Arrange
+
             //var dbOptions = new DbContextOptionsBuilder<RoomBookingAppDbContext>()
             //    .UseInMemoryDatabase("AvailableRoomTest")
             //    .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             //    .Options;
 
+            //Arrange
             var connString = "DataSource=:memory:";
             var conn = new SqliteConnection(connString);
             conn.Open();
