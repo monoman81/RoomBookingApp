@@ -8,7 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace RoomBookingApp.Core.Processors
 {
-    public class RoomBookingRequestProcessor
+    public class RoomBookingRequestProcessor : IRoomBookingRequestProcessor
     {
         public RoomBookingRequestProcessor(IRoomBookingService roomBookingService)
         {
@@ -19,7 +19,7 @@ namespace RoomBookingApp.Core.Processors
 
         public RoomBookingResult BookRoom(RoomBookingRequest bookingRequest)
         {
-            if (bookingRequest == null) 
+            if (bookingRequest == null)
                 throw new ArgumentNullException(nameof(bookingRequest));
 
             var availableRooms = _roomBookingService.GetAvailableRooms(bookingRequest.Date);
@@ -35,7 +35,7 @@ namespace RoomBookingApp.Core.Processors
             }
             else
                 result.Flag = BookingResultFlag.Failure;
-            
+
             return result;
         }
 

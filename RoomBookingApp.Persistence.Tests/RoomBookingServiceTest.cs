@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using RoomBookingApp.Domain;
 using RoomBookingApp.Persistence.Repositories;
 using System;
@@ -18,18 +20,25 @@ namespace RoomBookingApp.Persistence
             //Arrange
             var date = new DateTime(2025, 02, 22);
 
+            var connString = "DataSource=:memory:";
+            var conn = new SqliteConnection(connString);
+            conn.Open();
+
             var dbOptions = new DbContextOptionsBuilder<RoomBookingAppDbContext>()
-                .UseInMemoryDatabase("AvailableRoomTest")
+                .UseSqlite(conn)
                 .Options;
 
             using var context = new RoomBookingAppDbContext(dbOptions);
-            
-            context.Rooms.Add(new Room { Id = 1, Name = "Room 1" });
-            context.Rooms.Add(new Room { Id = 2, Name = "Room 2" });
-            context.Rooms.Add(new Room { Id = 3, Name = "Room 3" });
 
-            context.RoomBookings.Add(new RoomBooking { RoomId = 1, Date = date });
-            context.RoomBookings.Add(new RoomBooking { RoomId = 2, Date = date.AddDays(-1) });
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();   
+            
+            //context.Rooms.Add(new Room { Id = 1, Name = "Room 1" });
+            //context.Rooms.Add(new Room { Id = 2, Name = "Room 2" });
+            //context.Rooms.Add(new Room { Id = 3, Name = "Room 3" });
+
+            context.RoomBookings.Add(new RoomBooking { Id = 1, RoomId = 1, Date = date, Email="crpn81@yahoo.com.mx", FullName="Carlos Ponce" });
+            context.RoomBookings.Add(new RoomBooking { Id = 2, RoomId = 2, Date = date.AddDays(-1), Email = "monoman81@yahoo.com.mx", FullName = "Farid Ponce" });
 
             context.SaveChanges();
 
@@ -50,13 +59,26 @@ namespace RoomBookingApp.Persistence
         public void Should_Save_Room_Booking()
         {
             //Arrange
+            //var dbOptions = new DbContextOptionsBuilder<RoomBookingAppDbContext>()
+            //    .UseInMemoryDatabase("AvailableRoomTest")
+            //    .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+            //    .Options;
+
+            var connString = "DataSource=:memory:";
+            var conn = new SqliteConnection(connString);
+            conn.Open();
+
             var dbOptions = new DbContextOptionsBuilder<RoomBookingAppDbContext>()
-                .UseInMemoryDatabase("AvailableRoomTest")
+                .UseSqlite(conn)
                 .Options;
 
-            var roomBooking = new RoomBooking { RoomId = 1, Date = new DateTime(2025, 02, 22) };
+            var roomBooking = new RoomBooking { RoomId = 1, Date = DateTime.Now.AddDays(1).Date, Email = "crpn81@yahoo.com.mx", FullName = "Carlos Ponce" };
 
             using var context = new RoomBookingAppDbContext(dbOptions);
+
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+
             var roomBookingService = new RoomBookingService(context);
 
             //Act
